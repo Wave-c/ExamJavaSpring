@@ -2,8 +2,13 @@ package com.exam.ExamJavaSpring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+import com.exam.ExamJavaSpring.controllers.MainController;
 
 @SpringBootApplication
+@ComponentScan(basePackageClasses = MainController.class)
+@ComponentScan(basePackageClasses = JwtCore.class)
 public class ExamJavaSpringApplication {
 	private JwtCore jwtCore;
 

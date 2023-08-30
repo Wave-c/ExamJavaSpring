@@ -1,6 +1,10 @@
 package com.exam.ExamJavaSpring;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
+
+import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -12,16 +16,19 @@ import io.jsonwebtoken.*;
 
 @Component
 public class JwtCore {
-    @Value("${com.exam.secret}")
-    public String secret;
+    public SecretKey secret = io.jsonwebtoken.security.Keys.secretKeyFor(SignatureAlgorithm.HS256);
     @Value("${com.exam.lifeTime}")
     public String lifeTime;
 
     public String generateToken(Authentication authentication)
     {
         UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
-        return Jwts.builder().setSubject((userDetails.getUsername())).setIssuedAt(new Date())
-            .setExpiration(new Date((new Date()).getTime() + lifeTime))
+        return Jwts.builder()
+            .setSubject(userDetails.getUsername())
+            .setIssuedAt(new Date())
+            .setNotBefore(new Date())
+            .setExpiration(Date.from(LocalDateTime.now().plusSeconds(Integer.parseInt(lifeTime))
+                .atZone(ZoneId.systemDefault()).toInstant()))
             .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 

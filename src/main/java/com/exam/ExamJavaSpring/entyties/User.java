@@ -15,15 +15,15 @@ import lombok.Data;
 @Table(name="UsersTable")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @Column(name = "id", nullable = false)
+    private String id;
     @Column(name = "username", nullable = false)
     private String username;
     @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "firstName", nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
-    @Column(name = "lastName", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
     @Column(name = "patronymic", nullable = true)
     private String patronymic;
@@ -31,6 +31,8 @@ public class User {
     private String country;
     @Column(name = "city", nullable = false)
     private String city;
-    @Column(name = "isAdmin", nullable = false)
+    @Column(name = "is_admin", nullable = false)
     private Boolean isAdmin;
+    @Column(name = "accaunt_img", nullable = true)
+    private String accauntImg;
 }

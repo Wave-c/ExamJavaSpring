@@ -7,10 +7,10 @@ public class RegRequest
 {
     private String username;
     private String password;
-    private String lastName;
-    private String firstName;
+    private String last_name;
+    private String first_name;
     private String patronymic;
     private String country;
     private String city;
-    private Boolean isAdmin;
+    private Boolean is_admin;
 }

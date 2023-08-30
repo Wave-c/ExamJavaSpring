@@ -1,6 +1,7 @@
 package com.exam.ExamJavaSpring.controllers;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,10 +65,11 @@ public class SecurityController
         String hashedPassword = encoder.encode(regRequest.getPassword());
 
         User user = new User();
+        user.setId(UUID.randomUUID().toString());
         user.setUsername(regRequest.getUsername());
         user.setPassword(hashedPassword);
-        user.setFirstName(regRequest.getFirstName());
-        user.setLastName(regRequest.getLastName());
+        user.setFirstName(regRequest.getFirst_name());
+        user.setLastName(regRequest.getLast_name());
         user.setPatronymic(regRequest.getPatronymic());
         user.setCountry(regRequest.getCountry());
         user.setCity(regRequest.getCity());
@@ -84,32 +86,38 @@ public class SecurityController
         System.out.println("NEW POST SIGIN");
         Authentication authentication = null;
 
-       // String passwordFromDB;
-        //Optional<User> temp = userRepository.findUserByUsername(signinRequest.getUsername());
+        String passwordFromDB;
+        Optional<User> temp = userRepository.findUserByUsername(signinRequest.getUsername());
         System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        //if(temp.isPresent())
-        //{
-            //System.out.println(passwordFromDB = temp.get().getPassword());
+        if(temp.isPresent())
+        {
+            System.out.println(passwordFromDB = temp.get().getPassword());
 
-            //if(encoder.matches(signinRequest.getPassword(), passwordFromDB))
-            //{
-        try
-        {
-                    authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword()/*passwordFromDB*/));
-        }
-        catch(BadCredentialsException e)
-        {
+            if(encoder.matches(signinRequest.getPassword(), passwordFromDB))
+            {
+                try
+                {
+                    authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword()/*passwordFromDB*/));            
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    String jwt = jwtCore.generateToken(authentication);
+                    if(jwt.isEmpty())
+                    {
+                        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                    return ResponseEntity.ok(jwt);
+                }
+                catch(BadCredentialsException e)
+                {
+                    e.printStackTrace();
                     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                }
+            }
         }
-        //}
-        //}
-        //else
-        //{
-            //return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        //}
+        else
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtCore.generateToken(authentication);
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok("hui tam");
     }
 }

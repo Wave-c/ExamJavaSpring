@@ -18,8 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-
 import com.exam.ExamJavaSpring.TokenFilter;
 import com.exam.ExamJavaSpring.services.UserService;
 
@@ -49,39 +47,62 @@ public class SecurityConfigurator
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
     {
-        return authenticationConfiguration.getAuthenticationManager();
+        try
+        {
+            return authenticationConfiguration.getAuthenticationManager();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Primary
-    public AuthenticationManagerBuilder configureAuthenticationManagerBuilder(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception
+    public AuthenticationManagerBuilder configureAuthenticationManagerBuilder(AuthenticationManagerBuilder authenticationManagerBuilder)
     {
-        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
-        return authenticationManagerBuilder;
+        try
+        {
+            authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
+            return authenticationManagerBuilder;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception
+    public SecurityFilterChain filterChain(HttpSecurity http)
     {
         CorsConfiguration ccs = new CorsConfiguration().applyPermitDefaultValues();
         //ccs.addAllowedMethod("GET, POST");
         //ccs.addAllowedOrigin("http://localhost:3000");
-
-        http
-        .csrf(AbstractHttpConfigurer::disable)
-            .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
-                .configurationSource(request ->
-                (new CorsConfiguration()).applyPermitDefaultValues()))
-            .exceptionHandling(exceptions -> exceptions
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/secured/user").fullyAuthenticated()
-                .anyRequest().permitAll())
-            .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+        try
+        {
+            http
+            .csrf(AbstractHttpConfigurer::disable)
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
+                    .configurationSource(request ->
+                    (new CorsConfiguration()).applyPermitDefaultValues()))
+                .exceptionHandling(exceptions -> exceptions
+                    .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/secured/**").fullyAuthenticated()
+                    .anyRequest().permitAll())
+                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+            return http.build();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
