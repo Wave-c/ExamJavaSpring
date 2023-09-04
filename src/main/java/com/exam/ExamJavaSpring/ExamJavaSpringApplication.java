@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.exam.ExamJavaSpring.controllers.MainController;
+import com.exam.ExamJavaSpring.controllers.SecuredController;
 
 @SpringBootApplication
-@ComponentScan(basePackageClasses = MainController.class)
+@ComponentScan(basePackageClasses = SecuredController.class)
 @ComponentScan(basePackageClasses = JwtCore.class)
 public class ExamJavaSpringApplication {
 	private JwtCore jwtCore;

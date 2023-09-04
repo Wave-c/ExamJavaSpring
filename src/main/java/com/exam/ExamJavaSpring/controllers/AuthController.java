@@ -26,7 +26,7 @@ import com.exam.ExamJavaSpring.entyties.User;
 
 @RestController
 @RequestMapping("/auth")
-public class SecurityController 
+public class AuthController 
 {
     private UserRepository userRepository;
     private PasswordEncoder encoder;

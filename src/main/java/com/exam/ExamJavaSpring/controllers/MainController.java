@@ -1,77 +1,39 @@
 package com.exam.ExamJavaSpring.controllers;
 
-import java.security.Principal;
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.exam.ExamJavaSpring.entyties.User;
-import com.exam.ExamJavaSpring.repositories.UserRepository;
-import com.exam.ExamJavaSpring.requests.SetAccauntImgRequest;
-
-import com.google.gson.*;
+import com.exam.ExamJavaSpring.entyties.Room;
+import com.exam.ExamJavaSpring.services.RoomService;
+import com.google.gson.Gson;
 
 @RestController
-@RequestMapping("/secured")
+@RequestMapping("/main")
 public class MainController 
 {
-    private UserRepository userRepository;
+    private RoomService roomService;
+    private Gson gson = new Gson();
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository)
+    public void setRoomService(RoomService roomService)
     {
-        this.userRepository = userRepository;
-    }
-    
-    @GetMapping("/accaunt")
-    public String getAccauntData(Principal principal)
-    {
-        if(principal == null)
-        {
-            return null;
-        }
-        return principal.getName();
+        this.roomService = roomService;
     }
 
-    @PostMapping("/get-accaunt-img")
-    public String getAccauntImg(@RequestParam(required = true) String userName)
+    @GetMapping("/get-room-cards-list")
+    public ResponseEntity<?> getRoomCardsList(@RequestParam int page)
     {
-        System.out.println("accauntImg: OK");
-        Optional<User> user = userRepository.findUserByUsername(userName);
-        if(user.isPresent())
-        {
-            System.out.println("user is finded");
-            return user.get().getAccauntImg();
-        }
-        else
-        {
-            return null;
-        }
+        System.out.println("get room card list: OK");
+        List<Room> rooms = roomService.loadRoomsByPage(page);
+        System.out.println("rooms init: OK");
+        String jsonRoomsList = gson.toJson(rooms);
+        
+        return ResponseEntity.ok(jsonRoomsList);
     }
-
-    // @PostMapping("/set-accaunt-img")
-    // public ResponseEntity<?> setAccauntImg(@RequestBody Object img, @RequestBody String userName)
-    // {
-    //     // try
-    //     // {
-    //     //     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    //     //     User user = userRepository.findUserByUsername(userName).get();
-    //     //     userRepository.delete(user);
-    //     //     user.setAccauntImg(gson.toJson(img));
-    //     //     userRepository.save(user);
-    //     //     return ResponseEntity.ok("ёбаный рот, оно работает");
-    //     // }
-    //     // catch(Exception e)
-    //     // {
-    //     //     e.printStackTrace();
-    //     //     return ResponseEntity.badRequest().body("hui tam");
-    //     // }
-    // }
 }

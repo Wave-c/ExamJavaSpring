@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import com.exam.ExamJavaSpring.TokenFilter;
+import com.exam.ExamJavaSpring.services.RoomService;
 import com.exam.ExamJavaSpring.services.UserService;
 
 @Configuration
@@ -95,6 +96,7 @@ public class SecurityConfigurator
                 .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/secured/**").fullyAuthenticated()
+                    .requestMatchers("/main/**").permitAll()
                     .anyRequest().permitAll())
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
             return http.build();
