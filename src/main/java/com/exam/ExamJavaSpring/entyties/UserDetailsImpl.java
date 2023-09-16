@@ -24,7 +24,7 @@ public class UserDetailsImpl implements UserDetails
     private String country;
     private String city;
     private Boolean isAdmin;
-    private String accauntImg;
+    private byte[] accauntImg;
 
     public static UserDetailsImpl build(User user)
     {
@@ -37,6 +37,12 @@ public class UserDetailsImpl implements UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
+    }
+
+    @Autowired
+    public String getId()
+    {
+        return id;
     }
 
     @Override

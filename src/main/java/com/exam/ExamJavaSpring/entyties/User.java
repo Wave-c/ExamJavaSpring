@@ -34,5 +34,5 @@ public class User {
     @Column(name = "is_admin", nullable = false)
     private Boolean isAdmin;
     @Column(name = "accaunt_img", nullable = true)
-    private String accauntImg;
+    private byte[] accauntImg;
 }

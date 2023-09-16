@@ -11,7 +11,7 @@ import com.exam.ExamJavaSpring.entyties.UserDetailsImpl;
 import com.exam.ExamJavaSpring.repositories.UserRepository;
 
 @Service
-public class UserService implements UserDetailsService 
+public class UserService implements UserDetailsService, AutoCloseable
 {
     private UserRepository userRepository;
 
@@ -35,5 +35,9 @@ public class UserService implements UserDetailsService
             return null;
         }
     }
-    
+
+    @Override
+    public void close() throws Exception {
+        
+    }
 }

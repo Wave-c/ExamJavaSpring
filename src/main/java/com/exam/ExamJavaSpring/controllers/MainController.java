@@ -1,5 +1,6 @@
 package com.exam.ExamJavaSpring.controllers;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exam.ExamJavaSpring.entyties.Room;
+import com.exam.ExamJavaSpring.entyties.User;
+import com.exam.ExamJavaSpring.repositories.UserRepository;
 import com.exam.ExamJavaSpring.services.RoomService;
+import com.exam.ExamJavaSpring.services.UserService;
 import com.google.gson.Gson;
 
 @RestController
@@ -19,6 +23,13 @@ public class MainController
 {
     private RoomService roomService;
     private Gson gson = new Gson();
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository)
+    {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     public void setRoomService(RoomService roomService)
@@ -27,13 +38,19 @@ public class MainController
     }
 
     @GetMapping("/get-room-cards-list")
-    public ResponseEntity<?> getRoomCardsList(@RequestParam int page)
+    public ResponseEntity<?> getRoomCardsList(Principal principal, @RequestParam int page) throws Exception
     {
-        System.out.println("get room card list: OK");
         List<Room> rooms = roomService.loadRoomsByPage(page);
-        System.out.println("rooms init: OK");
-        String jsonRoomsList = gson.toJson(rooms);
         
-        return ResponseEntity.ok(jsonRoomsList);
+        if(principal == null)
+        {
+            return ResponseEntity.ok(gson.toJson(rooms));
+        }
+        else
+        {
+            User user = userRepository.findUserByUsername(principal.getName()).get();
+            roomService.processingRoomsList(rooms, user);
+            return ResponseEntity.ok(gson.toJson(rooms));
+        }
     }
 }

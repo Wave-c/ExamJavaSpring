@@ -83,16 +83,13 @@ public class AuthController
     @PostMapping("/sign-in")
     ResponseEntity<?> signIn(@RequestBody SigninRequest signinRequest)
     {
-        System.out.println("NEW POST SIGIN");
         Authentication authentication = null;
 
         String passwordFromDB;
         Optional<User> temp = userRepository.findUserByUsername(signinRequest.getUsername());
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         if(temp.isPresent())
         {
-            System.out.println(passwordFromDB = temp.get().getPassword());
-
+            passwordFromDB = temp.get().getPassword();
             if(encoder.matches(signinRequest.getPassword(), passwordFromDB))
             {
                 try

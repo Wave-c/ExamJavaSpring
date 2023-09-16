@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class SetAccauntImgRequest {
     private String userName;
-    private String accauntImg;
+    private byte[] accauntImg;
 }

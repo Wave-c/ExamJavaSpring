@@ -14,6 +14,10 @@ public class Room
     @Id
     @Column(name = "id", nullable = false)
     private String id;
+    @Column(name = "title", nullable = false)
+    private String title;
+    @Column(name = "description", nullable = false)
+    private String description;
     @Column(name = "title_img", nullable = false)
     private String titleImg;
     @Column(name = "img2", nullable = true)

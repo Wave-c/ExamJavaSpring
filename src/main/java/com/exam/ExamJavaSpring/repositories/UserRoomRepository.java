@@ -5,9 +5,10 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.exam.ExamJavaSpring.entyties.Room;
+import com.exam.ExamJavaSpring.entyties.communications.UserRoom;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room, String> {
+public interface UserRoomRepository extends JpaRepository<UserRoom, String>
+{
     
 }

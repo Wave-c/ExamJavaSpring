@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.exam.ExamJavaSpring.entyties.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> 
+public interface UserRepository extends JpaRepository<User, String> 
 {
     Optional<User> findUserByUsername(String username);
     Boolean existsByUsername(String username);
