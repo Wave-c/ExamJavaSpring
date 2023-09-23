@@ -1,5 +1,6 @@
 package com.exam.ExamJavaSpring.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.exam.ExamJavaSpring.entyties.Room;
 import com.exam.ExamJavaSpring.entyties.User;
+import com.exam.ExamJavaSpring.entyties.communications.Application;
 import com.exam.ExamJavaSpring.repositories.RoomRepository;
 
 import jakarta.transaction.Transactional;
@@ -89,6 +91,17 @@ public class RoomService {
                 rooms.remove(i);
                 i--;
             }
+        }
+        return rooms;
+    }
+
+    @Transactional
+    public List<Room> castListApplicationToListRoom(List<Application> applications)
+    {
+        List<Room> rooms = new ArrayList();
+        for(Application application : applications)
+        {
+            rooms.add(roomRepository.findById(application.getRoomId()).get());
         }
         return rooms;
     }

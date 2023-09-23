@@ -30,7 +30,7 @@ import com.exam.ExamJavaSpring.services.UserService;
 public class SecurityConfigurator 
 {
     private UserService userService;
-    private TokenFilter tokenFilter;
+    private TokenFilter tokenFilterr;
 
     @Autowired
     public void setUserService(UserService userService)
@@ -41,7 +41,7 @@ public class SecurityConfigurator
     @Autowired
     public void setTokenFilter(TokenFilter tokenFilter)
     {
-        this.tokenFilter = tokenFilter;
+        this.tokenFilterr = tokenFilter;
     }
 
     @Bean
@@ -101,7 +101,7 @@ public class SecurityConfigurator
                     .requestMatchers("/secured/**").fullyAuthenticated()
                     .requestMatchers("/main/**").permitAll()
                     .anyRequest().permitAll())
-                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(tokenFilterr, UsernamePasswordAuthenticationFilter.class);
             return http.build();
         }
         catch(Exception e)

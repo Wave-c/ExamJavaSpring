@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.exam.ExamJavaSpring.entyties.Room;
 import com.exam.ExamJavaSpring.entyties.User;
 import com.exam.ExamJavaSpring.repositories.UserRepository;
+import com.exam.ExamJavaSpring.services.ApplicationService;
 import com.exam.ExamJavaSpring.services.RoomService;
 import com.exam.ExamJavaSpring.services.UserService;
 import com.google.gson.Gson;
@@ -22,8 +23,15 @@ import com.google.gson.Gson;
 public class MainController 
 {
     private RoomService roomService;
+    private ApplicationService applicationService;
     private Gson gson = new Gson();
     private UserRepository userRepository;
+
+    @Autowired
+    public void setApplicationService(ApplicationService applicationService)
+    {
+        this.applicationService = applicationService;
+    }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository)

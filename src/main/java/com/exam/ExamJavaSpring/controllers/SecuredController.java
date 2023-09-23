@@ -1,6 +1,7 @@
 package com.exam.ExamJavaSpring.controllers;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.exam.ExamJavaSpring.entyties.Room;
 import com.exam.ExamJavaSpring.entyties.User;
+import com.exam.ExamJavaSpring.entyties.communications.Application;
 import com.exam.ExamJavaSpring.repositories.UserRepository;
 import com.exam.ExamJavaSpring.requests.SetAccauntImgRequest;
+import com.exam.ExamJavaSpring.responses.GetApplicationsResponse;
+import com.exam.ExamJavaSpring.services.ApplicationService;
 import com.exam.ExamJavaSpring.services.RoomService;
 import com.exam.ExamJavaSpring.services.UserRoomService;
 import com.google.gson.*;
@@ -29,7 +33,14 @@ public class SecuredController
     private UserRepository userRepository;
     private UserRoomService userRoomService;
     private RoomService roomService;
+    private ApplicationService applicationService;
     private Gson gson = new Gson();
+
+    @Autowired
+    public void setApplicationService(ApplicationService applicationService)
+    {
+        this.applicationService = applicationService;
+    }
 
     @Autowired
     public void setRoomService(RoomService roomService)
@@ -141,12 +152,83 @@ public class SecuredController
             addedRoom.setTitleImg("blya");
             if(roomService.saveRoom(addedRoom) == 0)
             {
-                return ResponseEntity.ok().build();
+                return ResponseEntity.ok("ok");
             }
             else
             {
                 return ResponseEntity.status(500).build();
             }
+        }
+    }
+
+    @PostMapping("/rent-a-room")
+    public ResponseEntity<?> rentRoom(@RequestBody Room room, Principal principal)
+    {
+        if(principal != null)
+        {
+            User user = userRepository.findUserByUsername(principal.getName()).get();
+            if(applicationService.saveApplication(room, user.getId()) == 0)
+            {
+                return ResponseEntity.ok().build();
+            } 
+            else
+            {
+                return ResponseEntity.status(500).build();
+            }
+        }
+        else
+        {
+            return ResponseEntity.status(401).build();
+        }
+    }
+
+    @GetMapping("/get-applications")
+    public ResponseEntity<?> getApplications(Principal principal)
+    {
+        if(principal != null)
+        {
+            User user = userRepository.findUserByUsername(principal.getName()).get();
+            List<Application> applications = applicationService.findApplicationBySellerId(user.getId());
+            List<GetApplicationsResponse> getApplicationsResponses = new ArrayList<>();
+            List<Room> rooms = roomService.castListApplicationToListRoom(applications);
+            String[] ids = new String[applications.size()];
+            for(int i = 0; i < applications.size(); i++)
+            {
+                ids[i] = applications.get(i).getId();
+                getApplicationsResponses.add(new GetApplicationsResponse(rooms.get(i), ids[i]));
+            }
+            return ResponseEntity.ok(
+                gson.toJson(
+                    getApplicationsResponses
+                )
+            );
+        }
+        else
+        {
+            return ResponseEntity.status(401).build();
+        }
+    }
+
+    @GetMapping("/access-or-not")
+    public ResponseEntity<?> accessOrNot(@RequestParam boolean isAccess, @RequestParam String roomId, @RequestParam String applicationId, Principal principal)
+    {
+        if(principal != null)
+        {
+            User user = userRepository.findUserByUsername(principal.getName()).get();
+            String buyerId = applicationService.findApplicationById(applicationId).getBuyerId();
+            if(isAccess)
+            {
+                if(userRoomService.saveUserRoom(buyerId, roomId) != 0)
+                {
+                    return ResponseEntity.status(500).build();
+                }
+            }
+            applicationService.deleteApplicationById(applicationId);
+            return ResponseEntity.ok().build();
+        }
+        else
+        {
+            return ResponseEntity.status(401).build();
         }
     }
 }

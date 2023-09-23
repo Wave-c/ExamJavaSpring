@@ -41,4 +41,18 @@ public class UserRoomService
         }
         return roomsId;
     }
+
+    @Transactional
+    public int saveUserRoom(String userId, String roomId)
+    {
+        try
+        {
+            userRoomRepository.save(new UserRoom(userId, roomId));
+            return 0;
+        }
+        catch(Exception e)
+        {
+            return -1;
+        }
+    }
 }

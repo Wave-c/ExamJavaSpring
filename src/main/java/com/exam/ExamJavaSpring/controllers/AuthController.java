@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.config.Task;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -57,6 +58,7 @@ public class AuthController
     @PostMapping("/registration")
     ResponseEntity<?> registration(@RequestBody RegRequest regRequest)
     {
+        System.out.println("reg: ok");
         if(userRepository.existsByUsername(regRequest.getUsername()))
         {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Выберите другой Login");
@@ -77,7 +79,7 @@ public class AuthController
 
         userRepository.save(user);
 
-        return ResponseEntity.ok("ебаный рот, оно зароботало");
+        return ResponseEntity.ok().build();
     }
     
     @PostMapping("/sign-in")
@@ -99,20 +101,20 @@ public class AuthController
                     String jwt = jwtCore.generateToken(authentication);
                     if(jwt.isEmpty())
                     {
-                        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                        return ResponseEntity.status(500).build();
                     }
                     return ResponseEntity.ok(jwt);
                 }
                 catch(BadCredentialsException e)
                 {
                     e.printStackTrace();
-                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                    return ResponseEntity.status(401).build();
                 }
             }
         }
         else
         {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(401).build();
         }
 
         return ResponseEntity.ok("hui tam");
