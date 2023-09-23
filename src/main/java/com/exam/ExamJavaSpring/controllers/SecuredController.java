@@ -61,26 +61,26 @@ public class SecuredController
     }
     
     @GetMapping("/accaunt")
-    public String getAccauntUsername(Principal principal)
+    public ResponseEntity<?> getAccauntUsername(Principal principal)
     {
         if(principal == null)
         {
-            return null;
+            return ResponseEntity.status(401).build();
         }
-        return principal.getName();
+        return ResponseEntity.ok(principal.getName());
     }
 
     @GetMapping("/get-accaunt-img")
-    public byte[] getAccauntImg(@RequestParam String userName)
+    public ResponseEntity<?> getAccauntImg(@RequestParam String userName)
     {
         Optional<User> user = userRepository.findUserByUsername(userName);
         if(user.isPresent())
         {
-            return user.get().getAccauntImg();
+            return ResponseEntity.ok(user.get().getAccauntImg());
         }
         else
         {
-            return null;
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -93,12 +93,12 @@ public class SecuredController
             userRepository.delete(user);
             user.setAccauntImg(setAccauntImgRequest.getAccauntImg());
             userRepository.save(user);
-            return ResponseEntity.ok("ёбаный рот, оно работает");
+            return ResponseEntity.ok().build();
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("hui tam");
+            return ResponseEntity.status(500).build();
         }
     }
 
@@ -107,7 +107,7 @@ public class SecuredController
     {
         if(principal == null)
         {
-            return ResponseEntity.badRequest().body("hui tam");
+            return ResponseEntity.status(401).build();
         }
         else
         {
@@ -123,7 +123,7 @@ public class SecuredController
     {
         if(principal == null)
         {
-            return ResponseEntity.badRequest().body("very bad request)");
+            return ResponseEntity.status(401).build();
         }
         else
         {
@@ -149,7 +149,7 @@ public class SecuredController
         {
             addedRoom.setId(UUID.randomUUID().toString());
             addedRoom.setUserId(userRepository.findUserByUsername(principal.getName()).get().getId());
-            addedRoom.setTitleImg("blya");
+            addedRoom.setTitleImg("noimg");
             if(roomService.saveRoom(addedRoom) == 0)
             {
                 return ResponseEntity.ok("ok");

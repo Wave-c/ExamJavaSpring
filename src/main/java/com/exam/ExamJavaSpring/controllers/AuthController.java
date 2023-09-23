@@ -58,7 +58,6 @@ public class AuthController
     @PostMapping("/registration")
     ResponseEntity<?> registration(@RequestBody RegRequest regRequest)
     {
-        System.out.println("reg: ok");
         if(userRepository.existsByUsername(regRequest.getUsername()))
         {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Выберите другой Login");
@@ -117,6 +116,6 @@ public class AuthController
             return ResponseEntity.status(401).build();
         }
 
-        return ResponseEntity.ok("hui tam");
+        return ResponseEntity.status(500).build();
     }
 }
